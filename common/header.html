@@ -8,17 +8,17 @@ api.createWidget("theme-selector", {
 
     click(event){
         let $target = $(event.target);
-        let id = $target.data('id');
+        let key = $target.data('key');
         let user;
         if (user = Discourse.__container__.lookup('current-user:main')) {
             ajax('/u/' + user.username + ".json").then(r => {
-                themeSelector.setLocalTheme([id], r.user.user_option.theme_key_seq);
+                themeSelector.setLocalTheme(key, r.user.user_option.theme_key_seq);
                 window.location.reload();
             });
             
             return false;
         } else {
-          themeSelector.setLocalTheme([id], 0);  
+          themeSelector.setLocalTheme(key,0);  
         }
         
         window.location.reload();
@@ -27,14 +27,14 @@ api.createWidget("theme-selector", {
 
     themeHtml(){
         let themes = themeSelector.listThemes(this.site);
-        let currentThemeId = themeSelector.currentThemeId();
+        let currentThemeKey = themeSelector.currentThemeKey();
         if (themes && themes.length > 1) {
             return themes.map(theme => {
                 let name = [theme.name];
-                if (theme.id === currentThemeId) {
+                if (theme.id === currentThemeKey) {
                     name.push('\xa0' + "*");
                 }
-                return h('li', h('a.widget-link', {attributes: {"data-id": theme.id}}, name));
+                return h('li', h('a.widget-link', {attributes: {"data-key": theme.id}}, name));
             });
         }
     },
